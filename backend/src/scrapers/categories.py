@@ -15,7 +15,8 @@ class Categories:
             ],
             'Mobile and Web Development': [
                 'mobile', 'web', 'frontend', 'full stack', 
-                'javascript', 'react', 'angular', 'vue', 'html', 'css'
+                'javascript', 'react', 'angular', 'vue', 'html', 'css',
+                'swiftui', 'android', 'swift'
             ],
             'Cloud Computing and DevOps': [
                 'cloud', 'devops', 'aws', 'azure', 'gcp', 'ci/cd', 
