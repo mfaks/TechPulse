@@ -108,7 +108,7 @@ const companies: Company[] = [
     {
         name: "Capital One",
         logo: "./capital-one.jpeg",
-        blogUrl: "https://www.capitalone.com/tech/",
+        blogUrl: "https://medium.com/capital-one-tech",
     },
     {
         name: "Klarna",
@@ -118,17 +118,17 @@ const companies: Company[] = [
     {
         name: "Medium",
         logo: "./medium.jpeg",
-        blogUrl: "https://medium.com",
+        blogUrl: "https://medium.engineering/",
     },
     {
         name: "Strava",
         logo: "./strava.svg",
-        blogUrl: "https://blog.strava.com/category/engineering/",
+        blogUrl: "https://medium.com/strava-engineering",
     },
     {
         name: "Flutter",
         logo: "./flutter.svg",
-        blogUrl: "https://flutter.dev/docs/development/tools/engineering",
+        blogUrl: "https://medium.com/flutter",
     },
 ];
 
