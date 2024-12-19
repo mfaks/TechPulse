@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
@@ -24,6 +24,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 };
 
 export default function App() {
+  const location = useLocation();
+  const showFooter = location.pathname !== '/news';
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col">
       <Navbar />
@@ -41,7 +44,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }

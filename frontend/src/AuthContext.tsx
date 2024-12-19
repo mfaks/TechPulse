@@ -18,11 +18,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Change to default export
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [userInfo ] = useState<UserInfo | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,7 +65,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Export the hook separately
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -75,5 +73,4 @@ export const useAuth = () => {
   return context;
 };
 
-// Default export for the provider
 export default AuthProvider;
