@@ -13,7 +13,7 @@ const companies: Company[] = [
     {
         name: "Airbnb",
         logo: "./airbnb.svg",
-        blogUrl: "https://airbnb.engineering",
+        blogUrl: "https://medium.com/airbnb-engineering",
     },
     {
         name: "Uber",
