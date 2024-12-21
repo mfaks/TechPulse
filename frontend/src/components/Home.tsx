@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from '@/AuthContext';
 
 export default function Home() {
-  const { initiateAuth } = useAuth();
+  useAuth();
 
   const handleLogin = (provider: string) => {
     window.location.href = `http://localhost:8000/login/${provider}`;
