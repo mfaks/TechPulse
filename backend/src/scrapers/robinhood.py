@@ -1,17 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-from categories import Categories
+from .categories import Categories
 
-def categorize_post(title):
-    categories = Categories.get_categories()
-    matched_categories = []
-    for category, keywords in categories.items():
-        if any(keyword in title.lower() for keyword in keywords):
-            matched_categories.append(category)
+def get_articles():
+    results = []
     
-    return matched_categories
-
-def get_and_print_articles():
     base_urls = [
         "https://newsroom.aboutrobinhood.com/category/engineering/",
         "https://newsroom.aboutrobinhood.com/category/engineering/page/2/",
@@ -20,7 +13,6 @@ def get_and_print_articles():
     
     try:
         for url in base_urls:
-            print(f"\nFetching articles from {url}\n")
             response = requests.get(url, timeout=30)
             response.raise_for_status()
             
@@ -43,21 +35,19 @@ def get_and_print_articles():
                 excerpt_elem = article.find('div', class_='frontpage-post-excerpt')
                 excerpt = excerpt_elem.text.strip() if excerpt_elem else ''
                 
+                categories = Categories.classify_article(title)
                 
-                categories = categorize_post(title)
-                
-                print(f"Title: {title}")
-                print(f"Author: {author}")
-                print(f"Date: {date}")
-                print(f"Link: {link}")
-                print(f"Categories: {', '.join(categories)}")
-                print(f"Excerpt: {excerpt}")
-                print("-" * 80)
-
+                results.append({
+                    'company': 'Robinhood',
+                    'title': title,
+                    'description': excerpt,
+                    'date': date,
+                    'author': author,
+                    'categories': categories,
+                    'url': link
+                })
+        
     except requests.RequestException as e:
         print(f"Error fetching content: {e}")
-    except Exception as e:
-        print(f"Error processing content: {e}")
-
-if __name__ == "__main__":
-    get_and_print_articles()
+        
+    return results

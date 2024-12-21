@@ -1,17 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-from categories import Categories
+from .categories import Categories
 
-def categorize_post(title, article_categories):
-    categories = Categories.get_categories()
-    matched_categories = []
-    text_to_check = f"{title} {' '.join(article_categories)}".lower()
-    for category, keywords in categories.items():
-        if any(keyword in text_to_check for keyword in keywords):
-            matched_categories.append(category)
-    return matched_categories
-
-def get_and_print_articles():
+def get_articles():
+    results = []
     base_urls = [
         "https://careersatdoordash.com/engineering-blog/?category=AI%20%26%20ML",
         "https://careersatdoordash.com/engineering-blog/?category=Data",
@@ -26,9 +18,9 @@ def get_and_print_articles():
             response.raise_for_status()
             
             soup = BeautifulSoup(response.content, 'html.parser')
-            articles = soup.find_all('div', {'class': 'fade'})
+            article_elements = soup.find_all('div', {'class': 'fade'})
             
-            for article in articles:
+            for article in article_elements:
 
                 title_elem = article.find('h3', class_='text-md')
                 title = title_elem.text.strip() if title_elem else 'Unknown Title'
@@ -44,19 +36,17 @@ def get_and_print_articles():
                 
                 content_elem = article.find('div', class_='text-sm text-stone')
                 content = content_elem.text.strip() if content_elem else ''
-
-                categories = categorize_post(title, article_categories)
+                categories = Categories.classify_article(title, article_categories)
                 
-                print(f"Title: {title}")
-                print(f"Link: {link}")
-                print(f"Categories: {', '.join(categories)}")
-                print(f"Content: {content}")
-                print("-" * 80)
-
+                results.append({
+                    'title': title,
+                    'url': link,
+                    'content': content,
+                    'categories': categories,
+                    'company': 'DoorDash'
+                })
+                
     except requests.RequestException as e:
         print(f"Error fetching content: {e}")
-    except Exception as e:
-        print(f"Error processing content: {e}")
 
-if __name__ == "__main__":
-    get_and_print_articles()
+    return results

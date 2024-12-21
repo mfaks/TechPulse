@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from categories import Categories
+from .categories import Categories
 
 def categorize_article(title, content):
     categories = Categories.get_categories()
@@ -11,7 +11,8 @@ def categorize_article(title, content):
             matched_categories.append(category)
     return matched_categories
 
-def get_and_print_articles():
+def get_articles():
+    results = []
     endpoints = [
         "https://www.linkedin.com/blog/engineering/data",
         "https://www.linkedin.com/blog/engineering/artificial-intelligence",
@@ -37,9 +38,9 @@ def get_and_print_articles():
                 print(f"No articles found on {endpoint}. Check the HTML structure or class names.")
                 continue
 
-            articles = ul_element.find_all('li', class_='post-list__item grid-post')
+            article_elements = ul_element.find_all('li', class_='post-list__item grid-post')
 
-            for article in articles:
+            for article in article_elements:
                 title_elem = article.find('div', class_='grid-post__title')
                 link_elem = title_elem.find('a') if title_elem else None
                 author_elem = article.find('p', class_='grid-post__author')
@@ -50,15 +51,17 @@ def get_and_print_articles():
                     content = article.find('div', class_='grid-post__content').text.strip() if article.find('div', class_='grid-post__content') else ''
                     categories = categorize_article(title, content)
                     
-                    print(f"Title: {title}")
-                    print(f"Author: {author_elem.text.strip() if author_elem else 'Unknown'}")
-                    print(f"Date: {date_elem.text.strip() if date_elem else 'Unknown'}")
-                    print(f"Categories: {', '.join(categories)}")
-                    print(f"Link: {link_elem['href']}")
-                    print("-" * 80)
-                    
+                    results.append({
+                        'company': 'LinkedIn',
+                        'title': title,
+                        'content': content,
+                        'author': author_elem.text.strip() if author_elem else 'Unknown',
+                        'date': date_elem.text.strip() if date_elem else 'Unknown',
+                        'categories': categories,
+                        'url': link_elem['href']
+                    })
+                       
     except requests.RequestException as e:
         print(f"Error fetching articles: {e}")
 
-if __name__ == "__main__":
-    get_and_print_articles()
+    return results

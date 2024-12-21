@@ -1,16 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-from categories import Categories
+from .categories import Categories
 
-def categorize_post(title):
-    categories = Categories.get_categories()
-    matched_categories = []
-    for category, keywords in categories.items():
-        if any(keyword in title.lower() for keyword in keywords):
-            matched_categories.append(category)
-    return matched_categories
-
-def get_and_print_articles():
+def get_articles():
+    results = []
     url = "https://www.snowflake.com/engineering-blog/"
     
     headers = {
@@ -40,17 +33,18 @@ def get_and_print_articles():
                 date = date_elem.text.strip() if date_elem else 'Unknown'
                 description = description_elem.text.strip() if description_elem else 'No description available.'
                 
-                categories = categorize_post(title)
+                categories = Categories.classify_article(title)
                 
-                print(f"Title: {title}")
-                print(f"Date: {date}")
-                print(f"Link: {link}")
-                print(f"Categories: {', '.join(categories)}")
-                print(f"Description: {description}")
-                print("-" * 80)
-
+                results.append({
+                    'company': 'Snowflake',
+                    'title': title,
+                    'description': description,
+                    'date': date,
+                    'categories': categories,
+                    'url': link
+                })
+        
     except requests.RequestException as e:
         print(f"Error fetching {url}: {e}")
 
-if __name__ == "__main__":
-    get_and_print_articles()
+    return results

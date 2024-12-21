@@ -1,17 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-from categories import Categories
+from .categories import Categories
 
-def categorize_post(title):
-    categories = Categories.get_categories()
-    matched_categories = []
-    for category, keywords in categories.items():
-        if any(keyword in title.lower() for keyword in keywords):
-            matched_categories.append(category)
-    
-    return matched_categories
-
-def get_and_print_articles():
+def get_articles():
+    results = []
     url = "https://stripe.com/blog/engineering"
     
     try:
@@ -19,9 +11,9 @@ def get_and_print_articles():
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')
-        articles = soup.find_all('article', {'class': 'BlogIndexPost'})
+        article_elements = soup.find_all('article', {'class': 'BlogIndexPost'})
         
-        for article in articles:
+        for article in article_elements:
             title_elem = article.find('h1', class_='BlogIndexPost__title')
             title_link = title_elem.find('a') if title_elem else None
             title = title_link.text.strip() if title_link else 'Unknown Title'
@@ -42,22 +34,22 @@ def get_and_print_articles():
             
             content_elem = article.find('div', class_='BlogIndexPost__body')
             content = content_elem.text.strip() if content_elem else ''
-            
-            categories = categorize_post(title)
-            
-            print(f"Title: {title}")
-            print(f"Company: Stripe")
-            print(f"Author: {' | '.join(authors) if authors else 'Unknown Author'}")
-            print(f"Date: {date}")
-            print(f"Categories: {', '.join(categories)}")
-            print(f"Link: {link}")
-            print(f"Content length: {len(content)} characters")
-            print("-" * 50)
 
+            categories = Categories.classify_article(title)
+            
+            article_data = {
+                'company': 'Stripe',
+                'title': title,
+                'url': link,
+                'date': date,
+                'authors': authors,
+                'content': content,
+                'categories': categories,
+            }
+            results.append(article_data)
+        
+            
     except requests.RequestException as e:
         print(f"Error fetching {url}: {e}")
-    except Exception as e:
-        print(f"Error processing content: {e}")
-
-if __name__ == "__main__":
-    get_and_print_articles()
+        
+    return results    

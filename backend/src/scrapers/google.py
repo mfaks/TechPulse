@@ -1,17 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
-from categories import Categories
+from .categories import Categories
 
-def categorize_post(title, content):
-    categories = Categories.get_categories()
-    text = (title + ' ' + content).lower()
-    matched_categories = []
-    for category, keywords in categories.items():
-        if any(keyword in text for keyword in keywords):
-            matched_categories.append(category)
-    return matched_categories
-
-def get_and_print_articles():
+def get_articles():
     base_headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -25,7 +16,7 @@ def get_and_print_articles():
         "https://developers.googleblog.com/en/search/?technology_categories=Mobile"
     ]
 
-    articles = []
+    results = []
 
     for url in google_urls:
         try:
@@ -50,26 +41,18 @@ def get_and_print_articles():
                     date_text = date_elem.text.strip() if date_elem else 'Unknown'
                     date = date_text.split('/')[0].strip()
 
-                    matched_categories = categorize_post(title, summary)
+                    matched_categories = Categories.classify_article(title, summary)
 
-                    articles.append({
+                    results.append({
+                        'company': 'Google',
                         'title': title,
-                        'url': full_url,
                         'summary': summary,
                         'date': date,
-                        'categories': matched_categories
+                        'categories': matched_categories,
+                        'url': full_url
                     })
-
+                           
         except requests.RequestException as e:
             print(f"Error fetching {url}: {e}")
-
-    for article in articles:
-        print(f"Title: {article['title']}")
-        print(f"URL: {article['url']}")
-        print(f"Summary: {article['summary']}")
-        print(f"Date: {article['date']}")
-        print(f"Categories: {', '.join(article['categories'])}")
-        print("-" * 80)
-
-if __name__ == "__main__":
-    get_and_print_articles()
+    
+    return results
