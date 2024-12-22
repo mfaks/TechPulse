@@ -42,7 +42,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=${BACKEND_URL}
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
   postgres:
     image: postgres:latest
