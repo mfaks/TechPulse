@@ -2,7 +2,7 @@ import feedparser
 from bs4 import BeautifulSoup
 from datetime import datetime
 from urllib.parse import urlparse
-from .categories import Categories
+from categories import Categories
 
 def get_company_from_url(url):
     
@@ -71,39 +71,29 @@ def get_articles():
     ]
     
     for feed_url in feeds:
-        try:
-            feed = feedparser.parse(feed_url)
-            company = get_company_from_url(feed_url)
-            for entry in feed.entries:
-                try:
-                    content = ""
-                    if hasattr(entry, 'content'):
-                        content = extract_content(entry.content[0].value)
-                    elif hasattr(entry, 'content_encoded'):
-                        content = extract_content(entry.content_encoded)
-                    elif hasattr(entry, 'summary'):
-                        content = extract_content(entry.summary)
+        feed = feedparser.parse(feed_url)
+        company = get_company_from_url(feed_url)
+        for entry in feed.entries:
+            content = ""
+            if hasattr(entry, 'content'):
+                content = extract_content(entry.content[0].value)
+            elif hasattr(entry, 'content_encoded'):
+                content = extract_content(entry.content_encoded)
+            elif hasattr(entry, 'summary'):
+                content = extract_content(entry.summary)
 
-                    author = entry.get('author', '')
-                    if hasattr(entry, 'dc_creator'):
-                        author = entry.dc_creator
+            author = entry.get('author', '')
+            if hasattr(entry, 'dc_creator'):
+                author = entry.dc_creator
 
-                    results.append({
-                        'company': company,
-                        'title': entry.title,
-                        'url': entry.link,
-                        'content': content,
-                        'author': author,
-                        'date': parse_date(entry.published),
-                        'categories': Categories.classify_article(entry.title, [])
-                    })
-                    
-                except Exception as e:
-                    print(f"Error processing entry from {company}: {str(e)}")
-                    continue
-                    
-        except Exception as e:
-            print(f"Error fetching feed {feed_url}: {str(e)}")
-            continue
+            results.append({
+                'company': company,
+                'title': entry.title,
+                'url': entry.link,
+                'content': content,
+                'author': author,
+                'date': parse_date(entry.published),
+                'categories': Categories.classify_article(entry.title, [])
+            })
     
     return results

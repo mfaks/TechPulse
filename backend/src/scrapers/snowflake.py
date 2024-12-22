@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .categories import Categories
+from categories import Categories
 
 def get_articles():
     results = []
@@ -14,37 +14,33 @@ def get_articles():
         'Connection': 'keep-alive'
     }
     
-    try:
-        response = requests.get(url, headers=headers, timeout=30)
-        response.raise_for_status()
+    response = requests.get(url, headers=headers, timeout=30)
+    response.raise_for_status()
+    
+    soup = BeautifulSoup(response.content, 'html.parser')
+    posts = soup.find_all('div', class_='m-blog-latest-posts__post')
+
+    for post in posts:
+        title_elem = post.find('h3', class_='post-title')
+        link_elem = post.find('a', class_='post-link')
+        date_elem = post.find('span', class_='post-date')
+        description_elem = post.find('p', class_='post-description')
+
+        if title_elem and link_elem:
+            title = title_elem.text.strip()
+            link = link_elem['href']
+            date = date_elem.text.strip() if date_elem else 'Unknown'
+            description = description_elem.text.strip() if description_elem else 'No description available.'
+            
+            categories = Categories.classify_article(title)
+            
+            results.append({
+                'company': 'Snowflake',
+                'title': title,
+                'description': description,
+                'date': date,
+                'categories': categories,
+                'url': link
+            })
         
-        soup = BeautifulSoup(response.content, 'html.parser')
-        posts = soup.find_all('div', class_='m-blog-latest-posts__post')
-
-        for post in posts:
-            title_elem = post.find('h3', class_='post-title')
-            link_elem = post.find('a', class_='post-link')
-            date_elem = post.find('span', class_='post-date')
-            description_elem = post.find('p', class_='post-description')
-
-            if title_elem and link_elem:
-                title = title_elem.text.strip()
-                link = link_elem['href']
-                date = date_elem.text.strip() if date_elem else 'Unknown'
-                description = description_elem.text.strip() if description_elem else 'No description available.'
-                
-                categories = Categories.classify_article(title)
-                
-                results.append({
-                    'company': 'Snowflake',
-                    'title': title,
-                    'description': description,
-                    'date': date,
-                    'categories': categories,
-                    'url': link
-                })
-        
-    except requests.RequestException as e:
-        print(f"Error fetching {url}: {e}")
-
     return results

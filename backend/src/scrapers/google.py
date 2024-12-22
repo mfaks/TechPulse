@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .categories import Categories
+from categories import Categories
 
 def get_articles():
     base_headers = {

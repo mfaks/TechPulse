@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .categories import Categories
+from categories import Categories
 
 def categorize_article(title, content):
     categories = Categories.get_categories()

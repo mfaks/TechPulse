@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from .routes.auth_routes import router as auth_router
-from .config import SESSION_SECRET, FRONTEND_URL
+import os 
+
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+SESSION_SECRET = os.getenv('SESSION_SECRET')
 
 app = FastAPI()
 

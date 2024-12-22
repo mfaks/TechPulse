@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Request, HTTPException
 from starlette.responses import RedirectResponse
 from ..auth import oauth
-from ..config import FRONTEND_URL
+import os
+
+BACKEND_URL = os.getenv('BACKEND_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 router = APIRouter()
 
@@ -9,7 +12,7 @@ router = APIRouter()
 async def login(provider: str, request: Request):
     try:
         client = oauth.create_client(provider)
-        redirect_uri = f"http://localhost:8000/auth/{provider}"
+        redirect_uri = f"{BACKEND_URL}/auth/{provider}"
         return await client.authorize_redirect(request, redirect_uri)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to initialize {provider} login: {str(e)}")
@@ -38,7 +41,7 @@ async def auth(provider: str, request: Request):
             }
         
         request.session['user'] = user_data
-        return RedirectResponse(url="http://localhost:5173/news?auth_success=true", status_code=302)
+        return RedirectResponse(url=f"{FRONTEND_URL}/news?auth_success=true", status_code=302)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to authenticate with {provider}: {str(e)}")
     
