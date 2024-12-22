@@ -21,16 +21,6 @@ services:
       - ./backend:/app
     depends_on:
       - localstack
-    command: >
-      bash -c "
-      pip install boto3 &&
-      echo 'Waiting for LocalStack to be ready...' &&
-      while ! nc -z localstack 4566; do sleep 1; done &&
-      echo 'LocalStack is ready!' &&
-      python src/aws/create_table.py &&
-      python src/aws/deploy_lambda.py &&
-      python -m uvicorn src.main:app --host 0.0.0.0 --port 8000
-      "
 
   frontend:
     build:
@@ -76,8 +66,11 @@ services:
     command: >
       bash -c "
       pip install apache-airflow-providers-amazon requests beautifulsoup4 feedparser boto3 &&
+      echo 'Waiting for PostgreSQL to be ready...' &&
+      while ! nc -z postgres 5432; do sleep 1; done &&
+      echo 'PostgreSQL is ready!' &&
       airflow db init &&
-      airflow connections delete aws_default &&
+      airflow connections delete aws_default || true &&
       airflow connections add aws_default --conn-type aws --conn-login ${AWS_ACCESS_KEY_ID} --conn-password ${AWS_SECRET_ACCESS_KEY} --conn-extra '{\"region_name\": \"${AWS_REGION}\", \"endpoint_url\": \"${LOCALSTACK}\"}' &&
       airflow users create --username ${AIRFLOW_USER} --password ${AIRFLOW_PASSWORD} --firstname ${AIRFLOW_FIRSTNAME} --lastname ${AIRFLOW_LASTNAME} --role Admin --email ${AIRFLOW_EMAIL} &&
       airflow webserver
@@ -119,11 +112,14 @@ services:
     command: >
       bash -c "
       pip install apache-airflow-providers-amazon requests beautifulsoup4 feedparser boto3 lxml &&
+      echo 'Waiting for Airflow webserver to be ready...' &&
+      while ! nc -z airflow 8080; do sleep 1; done &&
+      echo 'Airflow webserver is ready!' &&
       airflow scheduler
       "
     depends_on:
-      postgres:
-        condition: service_healthy
+      - airflow
+      - postgres
 
 volumes:
   postgres_data:
