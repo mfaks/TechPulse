@@ -1,0 +1,130 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - BACKEND_URL=${BACKEND_URL}
+      - LOCALSTACK=${LOCALSTACK}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - localstack
+    command: >
+      bash -c "
+      pip install boto3 &&
+      echo 'Waiting for LocalStack to be ready...' &&
+      while ! nc -z localstack 4566; do sleep 1; done &&
+      echo 'LocalStack is ready!' &&
+      python src/aws/create_table.py &&
+      python src/aws/deploy_lambda.py &&
+      python -m uvicorn src.main:app --host 0.0.0.0 --port 8000
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=${BACKEND_URL}
+
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  airflow:
+    image: apache/airflow:latest
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=${AIRFLOW__CORE__EXECUTOR}
+      - AIRFLOW__CORE__LOAD_EXAMPLES=${AIRFLOW__CORE__LOAD_EXAMPLES}
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__CORE__SQL_ALCHEMY_CONN}
+      - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__CORE__FERNET_KEY}
+      - AIRFLOW__CORE__DAGS_FOLDER=${AIRFLOW__CORE__DAGS_FOLDER}
+    volumes:
+      - ./backend/src/airflow/dags:/opt/airflow/dags
+      - ./backend/src/scrapers:/opt/airflow/scrapers
+      - airflow_logs:/opt/airflow/logs
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      pip install apache-airflow-providers-amazon requests beautifulsoup4 feedparser boto3 &&
+      airflow db init &&
+      airflow connections delete aws_default &&
+      airflow connections add aws_default --conn-type aws --conn-login ${AWS_ACCESS_KEY_ID} --conn-password ${AWS_SECRET_ACCESS_KEY} --conn-extra '{\"region_name\": \"${AWS_REGION}\", \"endpoint_url\": \"${LOCALSTACK}\"}' &&
+      airflow users create --username ${AIRFLOW_USER} --password ${AIRFLOW_PASSWORD} --firstname ${AIRFLOW_FIRSTNAME} --lastname ${AIRFLOW_LASTNAME} --role Admin --email ${AIRFLOW_EMAIL} &&
+      airflow webserver
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,lambda
+      - DEBUG=1
+      - PERSISTENCE=0
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - LAMBDA_EXECUTOR=local
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DISABLE_CORS_CHECKS=1
+      - INIT_SCRIPTS_PATH=/docker-entrypoint-initaws.d
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./backend/src/aws:/docker-entrypoint-initaws.d
+
+  airflow-scheduler:
+    image: apache/airflow:latest
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__CORE__SQL_ALCHEMY_CONN}
+      - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__CORE__FERNET_KEY}
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+    volumes:
+      - ./backend/src/airflow/dags:/opt/airflow/dags
+      - ./backend/src/scrapers:/opt/airflow/scrapers
+      - airflow_logs:/opt/airflow/logs
+    command: >
+      bash -c "
+      pip install apache-airflow-providers-amazon requests beautifulsoup4 feedparser boto3 lxml &&
+      airflow scheduler
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  airflow_logs:
