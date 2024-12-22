@@ -38,11 +38,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
+    environment:
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    environment:
-      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
   postgres:
     image: postgres:latest
