@@ -1,7 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from './AppSidebar';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Newspaper } from 'lucide-react';
 import FadeIn from "@/components/FadeIn";
 
 export default function News() {

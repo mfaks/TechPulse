@@ -73,28 +73,28 @@ export default function Navbar() {
                   <span className="sr-only">Close</span>
                 </button>
                 <DialogHeader className="space-y-4">
-                  <DialogTitle className="text-2xl font-bold text-blue-100 text-center">
+                  <DialogTitle className="text-4xl font-bold text-blue-100 text-center">
                     About TechPulse
                   </DialogTitle>
                   <DialogDescription>
                     <div className="mt-4 space-y-6">
-                      <p className="text-xl text-center underline text-blue-100">Your Personal Tech News Hub</p>
+                      <p className="text-2xl text-center underline text-blue-100">Your Personal Tech News Hub</p>
                       <div className="space-y-4">
                         <div className="bg-blue-900/50 p-4 rounded-lg">
-                          <p className="text-blue-100">
+                          <p className="text-blue-100 text-xl">
                             TechPulse is your personalized gateway to the latest in technology news.
                             We aggregate and curate news from various trusted sources, allowing you to
                             stay informed about the tech topics and companies that matter most to you.
                           </p>
                         </div>
                         <div className="bg-blue-900/50 p-4 rounded-lg">
-                          <p className="text-blue-100">
+                          <p className="text-blue-100 text-xl">
                             Our AI-powered platform analyzes hundreds of articles daily to bring you
                             the most relevant and impactful stories based on your interests.
                           </p>
                         </div>
                         <div className="bg-blue-900/50 p-4 rounded-lg">
-                          <p className="text-blue-100">
+                          <p className="text-blue-100 text-xl">
                             Built with modern web technologies and designed with user experience in mind,
                             TechPulse helps you stay ahead in the fast-paced world of technology.
                           </p>
@@ -127,18 +127,18 @@ export default function Navbar() {
                     <span className="sr-only">Close</span>
                   </button>
                   <DialogHeader className="space-y-4">
-                    <DialogTitle className="text-2xl font-bold text-blue-100 text-center">
+                    <DialogTitle className="text-4xl font-bold text-blue-100 text-center">
                       Welcome to TechPulse
                     </DialogTitle>
                     <DialogDescription>
                       <div className="mt-4 space-y-6">
-                        <p className="text-xl text-center underline text-blue-100">Using TechPulse</p>
+                        <p className="text-2xl text-center underline text-blue-100">Using TechPulse</p>
                         <div className="space-y-4">
                           <div className="bg-blue-900/50 p-4 rounded-lg flex items-start space-x-3">
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               1
                             </span>
-                            <p className="text-blue-100">
+                            <p className="text-blue-100 text-xl">
                               Browse the sidebar to explore available tech topics and companies. Choose the ones that match your interests.
                             </p>
                           </div>
@@ -146,7 +146,7 @@ export default function Navbar() {
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               2
                             </span>
-                            <p className="text-blue-100">
+                            <p className="text-blue-100 text-xl">
                               Select up to 3 topics and 5 companies, then click 'Create Feed' to set up your personalized news stream.
                             </p>
                           </div>
@@ -162,7 +162,7 @@ export default function Navbar() {
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               4
                             </span>
-                            <p className="text-blue-100">
+                            <p className="text-blue-100 text-xl">
                               Update your preferences anytime by selecting new topics or companies and clicking 'Create Feed' again.
                             </p>
                           </div>
