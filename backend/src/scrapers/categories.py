@@ -7,13 +7,13 @@ class Categories:
                 'microservices', 'architecture', 'cloud infrastructure', 
                 'kubernetes', 'docker', 'devops', 'scalability', 'performance'
             ],
-            'Artificial Intelligence and Machine Learning': [
+            'AI and Machine Learning': [
                 'artificial intelligence', 'machine learning', 'machine', 'neural network', 
                 'deep learning', 'ai', 'natural language processing', 
                 'computer vision', 'generative ai', 'predictive analytics', 
                 'reinforcement learning', 'data science', 'predictive', 'series'
             ],
-            'Mobile and Web Development': [
+            'Web and MobileDevelopment': [
                 'mobile', 'web', 'frontend', 'full stack', 
                 'javascript', 'react', 'angular', 'vue', 'html', 'css',
                 'swiftui', 'android', 'swift'
