@@ -4,7 +4,7 @@
 
 ## ✨ Industry Tech News. All in one Place. ✨
 
-<img width="900" alt="home" src="https://github.com/user-attachments/assets/97df0cf4-5c9a-4e71-a636-a770fa7cc495" />
+<img width="900" alt="news" src="https://github.com/user-attachments/assets/ee83d9f2-6b11-48c9-92a6-da2553c9826f" />
 
 </div>
 
