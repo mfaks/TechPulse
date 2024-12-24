@@ -4,19 +4,19 @@ class Categories:
         return {
             'Backend and Infrastructure': [
                 'backend', 'infrastructure', 'server', 'database', 'api', 
-                'microservices', 'architecture', 'cloud infrastructure', 
+                'microservices', 'architecture', 'cloud infrastructure', 'kafka',
                 'kubernetes', 'docker', 'devops', 'scalability', 'performance'
             ],
             'AI and Machine Learning': [
                 'artificial intelligence', 'machine learning', 'machine', 'neural network', 
-                'deep learning', 'ai', 'natural language processing', 
-                'computer vision', 'generative ai', 'predictive analytics', 
+                'deep learning', 'ai', 'natural language processing', 'search', 
+                'computer vision', 'generative ai', 'predictive analytics', 'ML',
                 'reinforcement learning', 'data science', 'predictive', 'series'
             ],
             'Web and MobileDevelopment': [
                 'mobile', 'web', 'frontend', 'full stack', 
                 'javascript', 'react', 'angular', 'vue', 'html', 'css',
-                'swiftui', 'android', 'swift'
+                'swiftui', 'android', 'swift', 'flutter', 'ios', 'mobile development',
             ],
             'Cloud Computing and DevOps': [
                 'cloud', 'devops', 'aws', 'azure', 'gcp', 'ci/cd', 
@@ -24,7 +24,8 @@ class Categories:
             ],
             'Data Engineering and Analytics': [
                 'data engineering', 'data analytics', 'big data', 'data lakes', 
-                'data warehousing', 'etl', 'data pipelines', 'queries', 'SQL'
+                'data warehousing', 'etl', 'data pipelines', 'queries', 'SQL',
+                'data', 'data science', 'analytics', 'data warehouse', 'data modeling',
             ],
             'Security and Privacy': [
                 'security', 'privacy', 'compliance', 'gdpr', 'data protection',
