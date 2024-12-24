@@ -23,7 +23,7 @@ aws_conn_config = {
 
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2024, 1, 1),
+    'start_date': datetime.now(),
     'retries': 3,
     'retry_delay': timedelta(minutes=5),
 }
@@ -32,7 +32,7 @@ dag = DAG(
     'web_scraping_dag',
     default_args=default_args,
     description='Production web scraping pipeline',
-    schedule_interval=timedelta(days=1),
+    schedule_interval='@daily',
     catchup=False
 )
 

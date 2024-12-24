@@ -19,22 +19,68 @@ def create_dynamodb_table():
             TableName='TechPulse',
             AttributeDefinitions=[
                 {
+                    'AttributeName': 'article_id',
+                    'AttributeType': 'S'
+                },
+                {
                     'AttributeName': 'company',
                     'AttributeType': 'S'
                 },
                 {
-                    'AttributeName': 'title',
+                    'AttributeName': 'date',
+                    'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': 'categories',
                     'AttributeType': 'S'
                 }
             ],
             KeySchema=[
                 {
-                    'AttributeName': 'company',
+                    'AttributeName': 'article_id',
                     'KeyType': 'HASH'
+                }
+            ],
+            GlobalSecondaryIndexes=[
+                {
+                    'IndexName': 'CompanyDateIndex',
+                    'KeySchema': [
+                        {
+                            'AttributeName': 'company',
+                            'KeyType': 'HASH'
+                        },
+                        {
+                            'AttributeName': 'date',
+                            'KeyType': 'RANGE'
+                        }
+                    ],
+                    'Projection': {
+                        'ProjectionType': 'ALL'
+                    },
+                    'ProvisionedThroughput': {
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
                 },
                 {
-                    'AttributeName': 'title',
-                    'KeyType': 'RANGE'
+                    'IndexName': 'CategoryDateIndex',
+                    'KeySchema': [
+                        {
+                            'AttributeName': 'categories',
+                            'KeyType': 'HASH'
+                        },
+                        {
+                            'AttributeName': 'date',
+                            'KeyType': 'RANGE'
+                        }
+                    ],
+                    'Projection': {
+                        'ProjectionType': 'ALL'
+                    },
+                    'ProvisionedThroughput': {
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
                 }
             ],
             ProvisionedThroughput={
@@ -43,8 +89,11 @@ def create_dynamodb_table():
             }
         )
         return True
+        
     except Exception as e:
+        print(f"Error creating table: {str(e)}")
         return False
+
 
 if __name__ == "__main__":
     create_dynamodb_table() 
