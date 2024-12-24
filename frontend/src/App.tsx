@@ -4,6 +4,7 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import News from './components/News';
+import { NewsProvider } from './NewsContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -37,7 +38,9 @@ export default function App() {
             path="/news"
             element={
               <ProtectedRoute>
-                <News />
+                <NewsProvider>
+                  <News />
+                </NewsProvider>
               </ProtectedRoute>
             }
           />

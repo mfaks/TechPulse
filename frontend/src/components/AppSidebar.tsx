@@ -12,10 +12,17 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import companies from "@/data/companies";
 import topics from "@/data/topics";
+import { KafkaConsumer } from "@/services/kafka";
+import { useNews } from "@/NewsContext";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  consumer: KafkaConsumer;
+}
+
+export function AppSidebar({ consumer }: AppSidebarProps) {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedCompanies, setSelectedCompanies] = useState<Set<string>>(new Set());
+  const { setIsProcessing } = useNews();
 
   const toggleCategory = (category: string) => {
     if (selectedCategories.has(category) || selectedCategories.size < 3) {
@@ -32,12 +39,12 @@ export function AppSidebar() {
   };
 
   const toggleCompany = (company: string) => {
-    if (selectedCompanies.has(company) || selectedCompanies.size < 5) {
+    if (selectedCompanies.has(company) || selectedCompanies.size < 3) {
       setSelectedCompanies(prev => {
         const newSet = new Set(prev);
         if (newSet.has(company)) {
           newSet.delete(company);
-        } else if (newSet.size < 5) {
+        } else if (newSet.size < 3) {
           newSet.add(company);
         }
         return newSet;
@@ -46,10 +53,17 @@ export function AppSidebar() {
   };
 
   const handleCreateFeed = () => {
-    console.log('Creating feed with:', {
-      categories: Array.from(selectedCategories),
+    const feedPreferences = {
+      topics: Array.from(selectedCategories),
       companies: Array.from(selectedCompanies)
-    });
+    };
+
+    if (consumer) {
+      setIsProcessing(true);
+      consumer.sendMessage(JSON.stringify(feedPreferences));
+    } else {
+      console.error('Consumer is undefined');
+    }
   };
 
   const handleClearSelection = (section: 'categories' | 'companies') => {

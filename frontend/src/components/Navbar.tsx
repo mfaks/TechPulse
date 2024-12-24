@@ -78,26 +78,26 @@ export default function Navbar() {
                   </DialogTitle>
                   <DialogDescription>
                     <div className="mt-4 space-y-6">
-                      <p className="text-2xl text-center underline text-blue-100">Your Personal Tech News Hub</p>
+                      <h2 className="text-2xl text-center underline text-blue-100">Your Personal Tech News Hub</h2>
                       <div className="space-y-4">
                         <div className="bg-blue-900/50 p-4 rounded-lg">
-                          <p className="text-blue-100 text-xl">
+                          <div className="text-blue-100 text-xl">
                             TechPulse is your personalized gateway to the latest in technology news.
                             We aggregate and curate news from various trusted sources, allowing you to
                             stay informed about the tech topics and companies that matter most to you.
-                          </p>
+                          </div>
                         </div>
                         <div className="bg-blue-900/50 p-4 rounded-lg">
-                          <p className="text-blue-100 text-xl">
+                          <div className="text-blue-100 text-xl">
                             Our AI-powered platform analyzes hundreds of articles daily to bring you
                             the most relevant and impactful stories based on your interests.
-                          </p>
+                          </div>
                         </div>
                         <div className="bg-blue-900/50 p-4 rounded-lg">
-                          <p className="text-blue-100 text-xl">
+                          <div className="text-blue-100 text-xl">
                             Built with modern web technologies and designed with user experience in mind,
                             TechPulse helps you stay ahead in the fast-paced world of technology.
-                          </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -132,39 +132,39 @@ export default function Navbar() {
                     </DialogTitle>
                     <DialogDescription>
                       <div className="mt-4 space-y-6">
-                        <p className="text-2xl text-center underline text-blue-100">Using TechPulse</p>
+                        <h2 className="text-2xl text-center underline text-blue-100">Using TechPulse</h2>
                         <div className="space-y-4">
                           <div className="bg-blue-900/50 p-4 rounded-lg flex items-start space-x-3">
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               1
                             </span>
-                            <p className="text-blue-100 text-xl">
+                            <div className="text-blue-100 text-xl">
                               Browse the sidebar to explore available tech topics and companies. Choose the ones that match your interests.
-                            </p>
+                            </div>
                           </div>
                           <div className="bg-blue-900/50 p-4 rounded-lg flex items-start space-x-3">
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               2
                             </span>
-                            <p className="text-blue-100 text-xl">
-                              Select up to 3 topics and 5 companies, then click 'Create Feed' to set up your personalized news stream.
-                            </p>
+                            <div className="text-blue-100 text-xl">
+                              Select up to 3 topics and 3 companies, then click 'Create Feed' to set up your personalized news stream.
+                            </div>
                           </div>
                           <div className="bg-blue-900/50 p-4 rounded-lg flex items-start space-x-3">
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               3
                             </span>
-                            <p className="text-blue-100 text-xl">
+                            <div className="text-blue-100 text-xl">
                               Wait briefly while our AI curates your feed with the most relevant articles for your selections.
-                            </p>
+                            </div>
                           </div>
                           <div className="bg-blue-900/50 p-4 rounded-lg flex items-start space-x-3">
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                               4
                             </span>
-                            <p className="text-blue-100 text-xl">
+                            <div className="text-blue-100 text-xl">
                               Update your preferences anytime by selecting new topics or companies and clicking 'Create Feed' again.
-                            </p>
+                            </div>
                           </div>
                         </div>
                       </div>
