@@ -14,12 +14,10 @@ def get_articles():
     for article in articles:
         title_elem = article.find('h2')
         if not title_elem:
-            print("No title element found, skipping article")
             continue
             
         link_elem = title_elem.find('a')
         if not link_elem:
-            print("No link element found, skipping article")
             continue
             
         author_elem = article.find('div', class_='blog-authors-styles')

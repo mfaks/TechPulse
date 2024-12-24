@@ -19,40 +19,36 @@ def get_articles():
     results = []
 
     for url in google_urls:
-        try:
-            response = requests.get(url, headers=base_headers, timeout=30)
-            response.raise_for_status()
+        response = requests.get(url, headers=base_headers, timeout=30)
+        response.raise_for_status()
 
-            soup = BeautifulSoup(response.content, 'html.parser')
-            search_results = soup.find_all('li', class_='search-result')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        search_results = soup.find_all('li', class_='search-result')
 
-            for result in search_results:
-                title_elem = result.find('h3', class_='search-result__title')
-                link_elem = title_elem.find('a') if title_elem else None
-                summary_elem = result.find('p', class_='search-result__summary')
-                date_elem = result.find('p', class_='search-result__eyebrow')
+        for result in search_results:
+            title_elem = result.find('h3', class_='search-result__title')
+            link_elem = title_elem.find('a') if title_elem else None
+            summary_elem = result.find('p', class_='search-result__summary')
+            date_elem = result.find('p', class_='search-result__eyebrow')
 
-                if link_elem:
-                    title = title_elem.text.strip()
-                    relative_url = link_elem['href']
-                    full_url = f"https://developers.googleblog.com{relative_url}"
-                    summary = summary_elem.text.strip() if summary_elem else ''
+            if link_elem:
+                title = title_elem.text.strip()
+                relative_url = link_elem['href']
+                full_url = f"https://developers.googleblog.com{relative_url}"
+                summary = summary_elem.text.strip() if summary_elem else ''
 
-                    date_text = date_elem.text.strip() if date_elem else 'Unknown'
-                    date = date_text.split('/')[0].strip()
+                date_text = date_elem.text.strip() if date_elem else 'Unknown'
+                date = date_text.split('/')[0].strip()
 
-                    matched_categories = Categories.classify_article(title, summary)
+                matched_categories = Categories.classify_article(title, summary)
 
-                    results.append({
-                        'company': 'Google',
-                        'title': title,
-                        'summary': summary,
-                        'date': date,
-                        'categories': matched_categories,
-                        'url': full_url
-                    })
+                results.append({
+                    'company': 'Google',
+                    'title': title,
+                    'summary': summary,
+                    'date': date,
+                    'categories': matched_categories,
+                    'url': full_url
+                })
                            
-        except requests.RequestException as e:
-            print(f"Error fetching {url}: {e}")
-    
     return results

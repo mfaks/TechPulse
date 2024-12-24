@@ -108,7 +108,6 @@ async def handle_websocket_connection(websocket: WebSocket, client_id: int, mana
         while True:
             try:
                 data = await websocket.receive_text()
-                print(f"Received message from client {client_id}: {data}")
                 preferences = json.loads(data)
                 
                 if 'topics' in preferences and 'companies' in preferences:
