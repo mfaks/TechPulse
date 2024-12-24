@@ -64,7 +64,7 @@ We welcome contributions to TechPulse! Please follow these steps:
 - **Additional News Sources**: Expand coverage to more tech companies (feel free to send me an email of a company that you want to see in TechPulse!)
 - **User Preferences**: Save and manage multiple news feed configurations specific to each user
 - **Mobile App**: Native mobile applications for iOS and Android to get your news on the go
-- **Analytics Dashboard**: Track reading habits and popular topics 
+- **Email Notifications**: Users will be able to sign up for automated emails containing the news they are looking for 
 
 ## License 📜
 
