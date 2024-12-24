@@ -17,9 +17,10 @@ import { useNews } from "@/NewsContext";
 
 interface AppSidebarProps {
   consumer: KafkaConsumer;
+  isConnected: boolean;
 }
 
-export function AppSidebar({ consumer }: AppSidebarProps) {
+export function AppSidebar({ consumer, isConnected }: AppSidebarProps) {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedCompanies, setSelectedCompanies] = useState<Set<string>>(new Set());
   const { setIsProcessing } = useNews();
@@ -58,11 +59,11 @@ export function AppSidebar({ consumer }: AppSidebarProps) {
       companies: Array.from(selectedCompanies)
     };
 
-    if (consumer) {
+    if (consumer && isConnected) {
       setIsProcessing(true);
       consumer.sendMessage(JSON.stringify(feedPreferences));
     } else {
-      console.error('Consumer is undefined');
+      console.error('WebSocket not connected');
     }
   };
 
@@ -156,9 +157,9 @@ export function AppSidebar({ consumer }: AppSidebarProps) {
         <Button
           onClick={handleCreateFeed}
           className="w-full bg-blue-600 text-white hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold"
-          disabled={selectedCategories.size === 0 && selectedCompanies.size === 0}
+          disabled={!isConnected || (selectedCategories.size === 0 && selectedCompanies.size === 0)}
         >
-          Create Feed
+          {isConnected ? 'Create Feed' : 'Connecting...'}
         </Button>
       </SidebarFooter>
     </Sidebar>

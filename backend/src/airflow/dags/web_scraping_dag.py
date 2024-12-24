@@ -23,7 +23,7 @@ aws_conn_config = {
 
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime.now(),
+    'start_date': datetime(2024, 1, 1),
     'retries': 3,
     'retry_delay': timedelta(minutes=5),
 }

@@ -72,7 +72,7 @@ export default function News() {
 
   return (
     <SidebarProvider>
-      <AppSidebar consumer={consumer} />
+      <AppSidebar consumer={consumer} isConnected={wsConnected} />
       <main className="flex-1 flex flex-col min-h-screen bg-gray-200">
         <div className="px-6">
           <div className="flex items-center pt-20">
@@ -140,6 +140,12 @@ export default function News() {
                                     components={{
                                       h2: ({node, ...props}) => (
                                         <h2 className="text-center" {...props} />
+                                      ),
+                                      h3: ({node, ...props}) => (
+                                        <h3 className="text-center" {...props} />
+                                      ),
+                                      p: ({node, ...props}) => (
+                                        <p className="text-block" {...props} />
                                       ),
                                     }}
                                     className="whitespace-pre-wrap prose prose-lg"

@@ -6,54 +6,30 @@ export class KafkaConsumer {
     private onMessageCallbacks: ((data: any) => void)[] = [];
     private connectionAttempts: number = 0;
     private maxRetries: number = 3;
-    private retryDelay: number = 1000;
-    private isConnecting: boolean = false;
-    private shouldReconnect: boolean = true;
 
     public async initialize() {
-        if (!this.isConnected && !this.isConnecting) {
-            await this.connect();
+        if (this.socket?.readyState === WebSocket.OPEN) {
+            return;
         }
+        await this.connect();
     }
 
     private async connect() {
-        if (this.isConnecting) return;
+        if (this.socket?.readyState === WebSocket.CONNECTING) {
+            return;
+        }
         
-        this.isConnecting = true;
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
         const clientId = Date.now();
-        const wsUrl = `ws://${backendUrl.replace('http://', '')}/ws/${clientId}`;
+        const wsUrl = backendUrl.replace('http', 'ws') + `/ws/${clientId}`;
 
         try {
-            if (this.socket) {
-                await this.closeExistingConnection();
-            }
-
             this.socket = new WebSocket(wsUrl);
             this.setupEventListeners();
         } catch (error) {
             console.error("WebSocket connection failed:", error);
             this.handleConnectionFailure();
-        } finally {
-            this.isConnecting = false;
         }
-    }
-
-    private async closeExistingConnection(): Promise<void> {
-        return new Promise((resolve) => {
-            if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-                resolve();
-                return;
-            }
-
-            const onClose = () => {
-                this.socket?.removeEventListener('close', onClose);
-                resolve();
-            };
-
-            this.socket.addEventListener('close', onClose);
-            this.socket.close(1000, "Closing existing connection");
-        });
     }
 
     private setupEventListeners() {
@@ -62,21 +38,13 @@ export class KafkaConsumer {
         this.socket.onopen = () => {
             this.isConnected = true;
             this.connectionAttempts = 0;
-            this.shouldReconnect = true;
             this.onConnectCallbacks.forEach(callback => callback());
         };
 
-        this.socket.onclose = (event) => {
-            const wasConnected = this.isConnected;
+        this.socket.onclose = () => {
             this.isConnected = false;
-            
-            if (wasConnected) {
-                this.onDisconnectCallbacks.forEach(callback => callback());
-            }
-
-            if (event.code !== 1000 && this.shouldReconnect) {
-                this.handleConnectionFailure();
-            }
+            this.onDisconnectCallbacks.forEach(callback => callback());
+            this.handleConnectionFailure();
         };
 
         this.socket.onmessage = (event) => {
@@ -88,15 +56,6 @@ export class KafkaConsumer {
                 }
             });
         };
-    }
-
-    private handleConnectionFailure() {
-        if (!this.shouldReconnect) return;
-        
-        if (this.connectionAttempts < this.maxRetries) {
-            this.connectionAttempts++;
-            setTimeout(() => this.connect(), this.retryDelay * this.connectionAttempts);
-        }
     }
 
     public on(event: 'connect' | 'disconnect' | 'message', callback: (data?: any) => void) {
@@ -121,12 +80,28 @@ export class KafkaConsumer {
     }
 
     public async disconnect() {
-        this.shouldReconnect = false;
         if (this.socket) {
             await this.closeExistingConnection();
             this.socket = null;
         }
         this.isConnected = false;
-        this.connectionAttempts = this.maxRetries;
+    }
+
+    private async closeExistingConnection(): Promise<void> {
+        return new Promise((resolve) => {
+            if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
+                resolve();
+                return;
+            }
+            this.socket.addEventListener('close', () => resolve());
+            this.socket.close();
+        });
+    }
+
+    private handleConnectionFailure() {
+        if (this.connectionAttempts < this.maxRetries) {
+            this.connectionAttempts++;
+            setTimeout(() => this.connect(), 1000 * this.connectionAttempts);
+        }
     }
 }
