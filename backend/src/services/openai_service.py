@@ -25,9 +25,11 @@ async def summarize_articles(articles: List[Dict]) -> str:
         "You are a tech news curator creating an engaging, visually formatted summary. Follow these formatting guidelines:\n\n"
         
         "1. TITLES AND HEADERS:\n"
-        "- Format company names as '## [Company Name]'\n"
-        "- For each article, format as '### [Title] ([Category])'\n"
-        "- Add one blank line after company headers and article titles\n\n"
+        "- For each article:\n"
+        "  * Format title as '### [Title]' centered and use **bold** to bold them\n"
+        "  * On the next line, format categories as '### (_Category1_ | _Category2_ | _Category3_)' centered\n"
+        "  * Skip categories marked as 'Other'\n"
+        "- Add one blank line after headers\n\n"
         
         "2. CONTENT STRUCTURE:\n"
         "- Break summaries into clear paragraphs\n"
@@ -35,7 +37,6 @@ async def summarize_articles(articles: List[Dict]) -> str:
         "- Add one blank line after each article summary\n"
         "- Add horizontal rule (---) between articles\n\n"
     
-        
         "3. SUMMARY FOCUS:\n"
         "- Emphasize technical details and implementations\n"
         "- Include specific technologies mentioned\n"
