@@ -1,7 +1,8 @@
 <div align="center">
   
-# TechPulse
-Industry Tech News. All in one Place.
+# 📰 TechPulse 📰
+
+## ✨ Industry Tech News. All in one Place. ✨
 
 <img width="900" alt="home" src="https://github.com/user-attachments/assets/97df0cf4-5c9a-4e71-a636-a770fa7cc495" />
 
