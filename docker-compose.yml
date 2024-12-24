@@ -37,6 +37,25 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,lambda
+      - DEBUG=1
+      - PERSISTENCE=0
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - LAMBDA_EXECUTOR=local
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DISABLE_CORS_CHECKS=1
+      - INIT_SCRIPTS_PATH=/docker-entrypoint-initaws.d
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./backend/src/aws:/docker-entrypoint-initaws.d
+
   postgres:
     image: postgres:latest
     environment:
@@ -76,30 +95,16 @@ services:
       airflow connections delete aws_default || true &&
       airflow connections add aws_default --conn-type aws --conn-login ${AWS_ACCESS_KEY_ID} --conn-password ${AWS_SECRET_ACCESS_KEY} --conn-extra '{\"region_name\": \"${AWS_REGION}\", \"endpoint_url\": \"${LOCALSTACK}\"}' &&
       airflow users create --username ${AIRFLOW_USER} --password ${AIRFLOW_PASSWORD} --firstname ${AIRFLOW_FIRSTNAME} --lastname ${AIRFLOW_LASTNAME} --role Admin --email ${AIRFLOW_EMAIL} &&
-      airflow webserver
-      "
+      airflow webserver & 
+      sleep 30 &&
+      airflow dags unpause web_scraping_dag &&
+      sleep 5 &&
+      airflow dags trigger web_scraping_dag &&
+      wait"
     depends_on:
       postgres:
         condition: service_healthy
 
-  localstack:
-    image: localstack/localstack:latest
-    ports:
-      - "4566:4566"
-    environment:
-      - SERVICES=dynamodb,lambda
-      - DEBUG=1
-      - PERSISTENCE=0
-      - AWS_REGION=${AWS_REGION}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - LAMBDA_EXECUTOR=local
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - DISABLE_CORS_CHECKS=1
-      - INIT_SCRIPTS_PATH=/docker-entrypoint-initaws.d
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - ./backend/src/aws:/docker-entrypoint-initaws.d
 
   airflow-scheduler:
     image: apache/airflow:latest
