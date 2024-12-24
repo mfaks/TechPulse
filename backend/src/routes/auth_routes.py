@@ -3,7 +3,7 @@ from starlette.responses import RedirectResponse
 from ..auth import oauth
 import os
 
-BACKEND_URL = os.getenv('BACKEND_URL')
+VITE_BACKEND_URL = os.getenv('VITE_BACKEND_URL')
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 router = APIRouter()
@@ -12,7 +12,7 @@ router = APIRouter()
 async def login(provider: str, request: Request):
     try:
         client = oauth.create_client(provider)
-        redirect_uri = f"{BACKEND_URL}/auth/{provider}"
+        redirect_uri = f"{VITE_BACKEND_URL}/auth/{provider}"
         return await client.authorize_redirect(request, redirect_uri)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to initialize {provider} login: {str(e)}")
